@@ -1,0 +1,23 @@
+api:
+  build: .
+  ports:
+    - "8001:8001"
+  links:
+    - redis_t1061
+    - pg_t1061
+
+redis_t1061:
+  image: index.alauda.cn/tutum/redis
+  ports:
+    - "6379:6379"
+  environment:
+    - REDIS_PASS=**None**
+
+pg_t1061:
+  image: index.alauda.cn/tutum/postgresql
+  ports:
+    - "5432:5432"
+  environment:
+    - DB_NAME=t1061
+    - DB_USER=t1061
+    - DB_PASS=t1061
