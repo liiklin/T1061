@@ -20,4 +20,4 @@ COPY . /usr/src/app
 # 设置端口
 EXPOSE 8001
 # 线上环境
-ENTRYPOINT nodemon ./bin/www.js
+ENTRYPOINT node ./bin/www.js
