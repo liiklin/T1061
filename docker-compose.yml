@@ -1,5 +1,6 @@
 api:
-  build: .
+  # build: .
+  image: registry.alauda.cn/liiklin/t1061
   ports:
     - "8001:8001"
   links:
@@ -14,7 +15,7 @@ redis_t1061:
     - REDIS_PASS=**None**
 
 pg_t1061:
-  image: index.alauda.cn/tutum/postgresql
+  image: registry.alauda.cn/sameersbn/postgresql
   ports:
     - "5432:5432"
   environment:

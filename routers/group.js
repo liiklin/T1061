@@ -113,7 +113,7 @@ module.exports = server => {
         })
         .catch(err => {
           logger.error('DELETE /group/:id', err)
-          
+
           switch (err.code) {
             case 404:
               res.send(404, {
@@ -193,15 +193,9 @@ module.exports = server => {
             if (err) {
               throw err
             } else {
-              let arr = []
-              
-              if (Array.isArray(results)) {
-                results.forEach(item => {
-                  arr = arr.concat(item)
-                })
-              }
-
-              res.json(arr)
+              res.json({
+                "message": "action_succeed"
+              })
 
               return next()
             }
