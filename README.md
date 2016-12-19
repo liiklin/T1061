@@ -14,7 +14,7 @@
 
 ## In Publishment with docker
 ```
-  docker-compose up -d --build
+  docker-compose up -d
 ```
 
 # .env
