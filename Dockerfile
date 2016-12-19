@@ -2,7 +2,7 @@ FROM daocloud.io/library/node:latest
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . /usr/src/app
-#安装依赖
+# 安装依赖
 RUN npm install --registry=https://registry.npm.taobao.org
 # 输入环境配置
 RUN echo 'PORT=8001' >> .env \
