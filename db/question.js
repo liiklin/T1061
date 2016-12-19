@@ -27,6 +27,7 @@ exports.findById = id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           const query = {}
@@ -39,6 +40,7 @@ exports.findById = id => new Promise((resolve, reject) => {
 
           Questions.one(query, (err, question) => {
             if (err) {
+              db.close()
               reject(err)
             } else {
               if (question) {
@@ -55,12 +57,15 @@ exports.findById = id => new Promise((resolve, reject) => {
                       question.link = answer
                     }
 
+                    db.close()
                     resolve(question)
                   })
                   .catch(err => {
+                    db.close()
                     reject(err)
                   })
               } else {
+                db.close()
                 reject(err)
               }
             }
@@ -80,9 +85,12 @@ exports.findAndNotLinks = id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Questions.find({ id }, (err, results) => {
+            db.close()
+
             if (err) {
               reject(err)
             } else {
@@ -104,9 +112,12 @@ exports.findByGroupId = group_id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Questions.find({ group_id }, (err, results) => {
+            db.close()
+
             if (err) {
               reject(err)
             } else {
@@ -137,10 +148,13 @@ exports.create = object => new Promise((resolve, reject) => {
 
       Questions.create(newRecord, (err, result) => {
         if (err) {
+          db.close()
+
           reject(err)
         } else {
           redis.emit(`questions create`, result)
 
+          db.close()
           resolve(result)
         }
       })
@@ -169,6 +183,7 @@ exports.updateItems = (id, object) => new Promise((resolve, reject) => {
 
         Questions.one(query, (err, question) => {
           if (err) {
+            db.close()
             reject({
               error: err,
               code: 500
@@ -180,6 +195,8 @@ exports.updateItems = (id, object) => new Promise((resolve, reject) => {
               })
 
               question.save(err => {
+                db.close()
+
                 if (err) {
                   reject({
                     error: err,
@@ -187,11 +204,13 @@ exports.updateItems = (id, object) => new Promise((resolve, reject) => {
                   })
                 } else {
                   redis.emit(`questions update`, question)
-                  
+
                   resolve(question)
                 }
               })
             } else {
+              db.close()
+
               reject({
                 error: err,
                 code: 404
@@ -216,6 +235,7 @@ exports.deleteById = id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject({
             error: err,
             code: 500
@@ -231,6 +251,7 @@ exports.deleteById = id => new Promise((resolve, reject) => {
 
           Questions.count(query, (err, count) => {
             if (err) {
+              db.close()
               reject({
                 error: err,
                 code: 500
@@ -238,6 +259,8 @@ exports.deleteById = id => new Promise((resolve, reject) => {
             } else {
               if (count) {
                 Questions.find(query).remove(err => {
+                  db.close()
+
                   if (err) {
                     reject({
                       error: err,
@@ -250,6 +273,8 @@ exports.deleteById = id => new Promise((resolve, reject) => {
                   }
                 })
               } else {
+                db.close()
+
                 reject({
                   error: err,
                   code: 404
@@ -275,6 +300,7 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject({
             error: err,
             code: 500
@@ -290,6 +316,7 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
 
           Questions.one(query, (err, question) => {
             if (err) {
+              db.close()
               reject({
                 error: err,
                 code: 500
@@ -308,6 +335,8 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                       })
                       .then(() => {
                         question.save(err => {
+                          db.close()
+
                           if (err) {
                             throw err
                           } else {
@@ -317,10 +346,13 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                           }
                         })
                       })
-                      .catch(err => reject({
-                        error: err,
-                        code: 500
-                      }))
+                      .catch(err => {
+                        db.close()
+                        reject({
+                          error: err,
+                          code: 500
+                        })
+                      })
                     break
                   case 'reply':
                     question.reply = object.data
@@ -336,6 +368,8 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                     similar.deleteByQuestionId(question.id)
                       .then(() => {
                         question.save(err => {
+                          db.close()
+
                           if (err) {
                             throw err
                           } else {
@@ -345,15 +379,20 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                           }
                         })
                       })
-                      .catch(err => reject({
-                        error: err,
-                        code: 500
-                      }))
+                      .catch(err => {
+                        db.close()
+                        reject({
+                          error: err,
+                          code: 500
+                        })
+                      })
                     break
                 }
 
                 if (object.action !== 'link' && object.action !== 'unlink') {
                   question.save(err => {
+                    db.close()
+
                     if (err) {
                       reject({
                         error: err,
@@ -367,6 +406,8 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                   })
                 }
               } else {
+                db.close()
+                
                 reject({
                   error: err,
                   code: 404

@@ -16,9 +16,12 @@ exports.findByQuestionId = question_id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Similars.one({ question_id }, (err, result) => {
+            db.close()
+
             if (err) {
               reject(err)
             } else {
@@ -40,9 +43,12 @@ exports.findByAnswerId = answer_id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Similars.find({ answer_id }, (err, result) => {
+            db.close()
+
             if (err) {
               reject(err)
             } else {
@@ -64,16 +70,20 @@ exports.update = (question_id, answer_id) => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Similars.one({ question_id, answer_id }, (err, similar) => {
             if (err) {
+              db.close()
               reject(err)
             } else {
               if (similar) {
                 similar.answer_id = answer_id
 
                 similar.save(err => {
+                  db.close()
+
                   if (err) {
                     reject(err)
                   } else {
@@ -88,6 +98,8 @@ exports.update = (question_id, answer_id) => new Promise((resolve, reject) => {
                 }
 
                 Similars.create(newRecord, (err, result) => {
+                  db.close()
+
                   if (err) {
                     reject(err)
                   } else {
@@ -112,9 +124,12 @@ exports.deleteByQuestionId = question_id => new Promise((resolve, reject) => {
         const Similars = db.define('similars', similarsSchema)
 
         if (err) {
+          db.close()
           reject(err)
         } else {
           Similars.find({ question_id }).remove(err => {
+            db.close()
+            
             if (err) {
               reject(err)
             } else {

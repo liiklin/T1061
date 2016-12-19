@@ -8,7 +8,7 @@ const answer = require('../db/answer')
 const question = require('../db/question')
 
 module.exports = server => {
-  namespace(server, '/api/:version/online/group', () => {
+  namespace(server, '/api/:version/online/groups', () => {
     server.get('/', (req, res, next) => {
       group.find()
         .then(results => {
@@ -175,7 +175,7 @@ module.exports = server => {
         })
         .then(res => res.json())
         .then(json => {
-          page = Math.ceil(json.totalcount / 10)
+          page = Math.ceil(json.totalcount / count)
 
           for (let i = 1; i <= page; i += 1) {
             promises.push(callback => {

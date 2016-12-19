@@ -37,3 +37,10 @@
  - 取消关联标准答案：`questions unlink`
  - 提交简要回复：`questions reply`
  - 提交拒绝回答：`questions abort`
+
+# 提醒
+
+  - 强制更新时报错`error: sorry, too many clients already`？
+    需要修改数据库的`clients`连接数，值改为 100 以上。
+
+  - 数据库请自行导入

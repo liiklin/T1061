@@ -22,6 +22,7 @@ exports.findById = id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           const query = {}
@@ -34,6 +35,7 @@ exports.findById = id => new Promise((resolve, reject) => {
 
           Answers.one(query, (err, answer) => {
             if (err) {
+              db.close()
               reject(err)
             } else {
               if (answer) {
@@ -50,9 +52,13 @@ exports.findById = id => new Promise((resolve, reject) => {
                       answer.links = links
                     }
 
+                    db.close()
                     resolve(answer)
                   })
-                  .catch(err => reject(err))
+                  .catch(err => {
+                    db.close()
+                    reject(err)
+                  })
               } else {
                 reject()
               }
@@ -73,6 +79,7 @@ exports.findByIdAndNotLinks = id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           const query = {}
@@ -84,6 +91,8 @@ exports.findByIdAndNotLinks = id => new Promise((resolve, reject) => {
           }
 
           Answers.one(query, (err, answer) => {
+            db.close()
+
             if (err) {
               reject(err)
             } else {
@@ -105,9 +114,11 @@ exports.findByGroupId = group_id => new Promise((resolve, reject) => {
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Answers.find({ group_id }, (err, results) => {
+            db.close()
             if (err) {
               reject(err)
             } else {
@@ -135,6 +146,8 @@ exports.createItem = (group_id, data) => new Promise((resolve, reject) => {
       }
 
       Answers.create(newRecord, (err, result) => {
+        db.close()
+
         if (err) {
           reject(err)
         } else {
@@ -159,6 +172,7 @@ exports.createBeforeUpdate = (group_id, data) => new Promise((resolve, reject) =
 
       db.sync(err => {
         if (err) {
+          db.close()
           reject(err)
         } else {
           Answers.find({ chlo2u_uuid: id }, (err, answers) => {
@@ -189,9 +203,13 @@ exports.createBeforeUpdate = (group_id, data) => new Promise((resolve, reject) =
               .then(results => {
                 redis.emit('answers sync', results)
 
+                db.close()
                 resolve(results)
               })
-              .catch(err => reject(err))
+              .catch(err => {
+                db.close()
+                reject(err)
+              })
           })
         }
       })
