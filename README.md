@@ -12,6 +12,11 @@
   npm run start
 ```
 
+## In Publishment with docker
+```
+  docker-compose up -d --build
+```
+
 # .env
 
 `.env`文件默认上传到仓库上，上线前先修改`.env-example`的名字为`.env`。
@@ -42,5 +47,3 @@
 
   - 强制更新时报错`error: sorry, too many clients already`？
     需要修改数据库的`clients`连接数，值改为 100 以上。
-
-  - 数据库请自行导入
