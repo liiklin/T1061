@@ -8,7 +8,7 @@ api:
     - pg_t1061
 
 redis_t1061:
-  restart: always
+  # restart: always
   image: index.alauda.cn/tutum/redis
   ports:
     - "6379:6379"
@@ -16,7 +16,7 @@ redis_t1061:
     - REDIS_PASS=**None**
 
 pg_t1061:
-  restart: always
+  # restart: always
   image: registry.alauda.cn/sameersbn/postgresql
   ports:
     - "5432:5432"
