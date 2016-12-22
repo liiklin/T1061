@@ -17,28 +17,28 @@
 --  Sequence structure for answers_id_seq
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."answers_id_seq";
-CREATE SEQUENCE "public"."answers_id_seq" INCREMENT 1 START 271 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
+CREATE SEQUENCE "public"."answers_id_seq" INCREMENT 1 START 1 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
 ALTER TABLE "public"."answers_id_seq" OWNER TO "t1061";
 
 -- ----------------------------
 --  Sequence structure for groups_id_seq
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."groups_id_seq";
-CREATE SEQUENCE "public"."groups_id_seq" INCREMENT 1 START 13 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
+CREATE SEQUENCE "public"."groups_id_seq" INCREMENT 1 START 1 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
 ALTER TABLE "public"."groups_id_seq" OWNER TO "t1061";
 
 -- ----------------------------
 --  Sequence structure for questions_id_seq
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."questions_id_seq";
-CREATE SEQUENCE "public"."questions_id_seq" INCREMENT 1 START 7 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
+CREATE SEQUENCE "public"."questions_id_seq" INCREMENT 1 START 1 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
 ALTER TABLE "public"."questions_id_seq" OWNER TO "t1061";
 
 -- ----------------------------
 --  Sequence structure for similars_id_seq
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."similars_id_seq";
-CREATE SEQUENCE "public"."similars_id_seq" INCREMENT 1 START 4 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
+CREATE SEQUENCE "public"."similars_id_seq" INCREMENT 1 START 1 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
 ALTER TABLE "public"."similars_id_seq" OWNER TO "t1061";
 
 -- ----------------------------
@@ -105,10 +105,10 @@ ALTER TABLE "public"."answers" OWNER TO "t1061";
 -- ----------------------------
 --  Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."answers_id_seq" RESTART 272 OWNED BY "answers"."id";
-ALTER SEQUENCE "public"."groups_id_seq" RESTART 14 OWNED BY "groups"."id";
-ALTER SEQUENCE "public"."questions_id_seq" RESTART 8 OWNED BY "questions"."id";
-ALTER SEQUENCE "public"."similars_id_seq" RESTART 5 OWNED BY "similars"."id";
+ALTER SEQUENCE "public"."answers_id_seq" RESTART 1 OWNED BY "answers"."id";
+ALTER SEQUENCE "public"."groups_id_seq" RESTART 1 OWNED BY "groups"."id";
+ALTER SEQUENCE "public"."questions_id_seq" RESTART 1 OWNED BY "questions"."id";
+ALTER SEQUENCE "public"."similars_id_seq" RESTART 1 OWNED BY "similars"."id";
 -- ----------------------------
 --  Primary key structure for table questions
 -- ----------------------------
