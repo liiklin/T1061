@@ -164,7 +164,7 @@ module.exports = server => {
     server.patch('/:id/answers', (req, res, next) => {
       let page = 0
       let url = ''
-      const count = 100
+      const count = 30
       const promises = []
 
       group.findOneById(req.params.id)
