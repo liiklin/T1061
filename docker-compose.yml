@@ -20,8 +20,8 @@ pg_t1061:
   image: registry.alauda.cn/sameersbn/postgresql
   ports:
     - "5432:5432"
-  volumes:
-    - ./data:/var/lib/postgresql
+  # volumes:
+  #   - ./data:/var/lib/postgresql
   environment:
     - DB_NAME=t1061
     - DB_USER=t1061
