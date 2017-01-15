@@ -115,7 +115,7 @@ module.exports = server => {
         })
         .catch(err => {
           logger.error('DELETE /questions/:id', err)
-          
+
           switch (err.code) {
             case 500:
               res.send(500, {

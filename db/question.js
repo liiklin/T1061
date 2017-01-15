@@ -130,6 +130,51 @@ exports.findByGroupId = group_id => new Promise((resolve, reject) => {
   })
 })
 
+exports.findByQuery = query => new Promise((resolve, reject) => {
+  let begin_time = new Date(),
+    end_time = new Date(),
+    page = query.page || 1,
+    page_size = query.page_size || 20
+
+  if (query.begin_time) {
+    begin_time = new Date(query.begin_time)
+    delete query.begin_time
+  }
+  if (query.end_time) {
+    end_time = new Date(query.end_time)
+    delete query.end_time
+  }
+  delete query.page
+  delete query.page_size
+
+  query['created_at'] = orm.between(begin_time,end_time)
+
+  orm.connect(db_url, (err, db) => {
+    if (err) {
+      reject(err)
+    } else {
+      const Questions = db.define('questions', QuestionsSchema)
+
+      db.sync(err => {
+        if (err) {
+          db.close()
+          reject(err)
+        } else {
+          Questions.find(query).limit(20).offset((page-1) * 20).run((err, results) => {
+            db.close()
+
+            if (err) {
+              reject(err)
+            } else {
+              resolve(results)
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
 exports.create = object => new Promise((resolve, reject) => {
   orm.connect(db_url, (err, db) => {
     if (err) {
@@ -407,7 +452,7 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                 }
               } else {
                 db.close()
-                
+
                 reject({
                   error: err,
                   code: 404
