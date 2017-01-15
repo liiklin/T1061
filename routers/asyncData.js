@@ -11,9 +11,9 @@ module.exports = server => {
         server.get('/', (req, res, next) => {
             group.find()
                 .then(results => {
+                    let port = process.env.PORT || 8001
                     results.forEach(result => {
-                        let port = process.env.PORT || 8001,
-                            options = {
+                        let options = {
                                 host: 'localhost',
                                 port: port,
                                 method: 'PATCH',
