@@ -11,5 +11,6 @@ server.use(validator())
 require('./routers/group')(server)
 require('./routers/answer')(server)
 require('./routers/question')(server)
+require('./routers/asyncData')(server)
 
 module.exports = server
