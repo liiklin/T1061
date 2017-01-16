@@ -149,6 +149,7 @@ exports.findByQuery = query => new Promise((resolve, reject) => {
 
   query['created_at'] = orm.between(begin_time,end_time)
 
+  // console.log(query)
   orm.connect(db_url, (err, db) => {
     if (err) {
       reject(err)
@@ -368,7 +369,13 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
               })
             } else {
               if (question) {
-                question.state = object.action
+                let stateAllow = {
+                    'unlink': 'initial',
+                    'link': 'linked',
+                    'abort': 'aborted',
+                    'reply': 'replied'
+                }
+                question.state = stateAllow[object.action]
 
                 switch (object.action) {
                   case 'link':
