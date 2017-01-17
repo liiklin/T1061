@@ -17,9 +17,8 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_URL=redis_t1061' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
-# RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-ENV TZ=Asia/Shanghai
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN echo "Asia/shanghai" > /etc/timezone
+COPY /etc/localtime /etc/localtime
 RUN date
 RUN date -R
 # 暴露端口
