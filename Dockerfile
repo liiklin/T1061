@@ -20,9 +20,9 @@ RUN echo 'PORT=8001' >> .env \
 RUN node -v
 # RUN service ntp start
 # RUN service ntp status
-RUN timedatectl list-timezones
-RUN timedatectl
-RUN timedatectl set-ntp yes
+RUN service ntp start
+RUN service ntp status
+RUN date
 # 暴露端口
 EXPOSE 8001
 ENTRYPOINT node ./bin/www.js
