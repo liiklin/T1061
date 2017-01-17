@@ -18,10 +18,8 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
 RUN node -v
-# RUN service ntp start
-# RUN service ntp status
-RUN service ntp start
-RUN service ntp status
+RUN /etc/rc.d/init.d ntp start
+RUN /etc/rc.d/init.d ntp status
 RUN date
 # 暴露端口
 EXPOSE 8001
