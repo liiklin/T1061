@@ -3,7 +3,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
 # 安装依赖
-RUN yum install -y tar ntp
+RUN yum install -y tar ntp ntpdate
 RUN npm install -g n
 RUN n latest
 RUN npm install
@@ -18,9 +18,9 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
 RUN node -v
-RUN ls /etc/rc.d/init.d/
-RUN /etc/rc.d/init.d/ntpd start
-RUN /etc/rc.d/init.d/ntpdd status
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN ntpdate us.pool.ntp.org
+RUN /usr/sbin/ntpdate us.pool.ntp.org | logger -t NTP
 RUN date
 # 暴露端口
 EXPOSE 8001
