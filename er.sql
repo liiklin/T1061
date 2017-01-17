@@ -98,7 +98,7 @@ CREATE TABLE "public"."similars" (
 	"id" int4 NOT NULL DEFAULT nextval('similars_id_seq'::regclass),
 	"question_id" int4 NOT NULL,
 	"answer_id" int4,
-	"created_at" date
+	"created_at" timestamp(6) NULL
 )
 WITH (OIDS=FALSE);
 ALTER TABLE "public"."similars" OWNER TO "t1061";
