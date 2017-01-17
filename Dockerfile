@@ -3,8 +3,6 @@ FROM registry.alauda.cn/dubuqingfeng/centos7-nodejs
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
-# 设置镜像
-RUN yum install yum-plugin-fastestmirror
 # 安装依赖
 RUN npm install --registry=https://registry.npm.taobao.org
 RUN npm install -g n --registry=https://registry.npm.taobao.org
