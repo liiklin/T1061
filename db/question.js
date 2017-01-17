@@ -140,25 +140,22 @@ exports.findByQuery = query => new Promise((resolve, reject) => {
         page = query.page || 1,
         page_size = query.page_size || 20
 
+    // console.log(query)
     if (query.begin_time && query.end_time) {
         begin_time = new Date(query.begin_time)
         end_time = new Date(query.end_time)
-        delete query.begin_time
-        delete query.end_time
         query['created_at'] = orm.between(begin_time, end_time)
-    }else if (query.begin_time && !query.begin_time) {
+    }else if (query.begin_time && !query.end_time) {
         begin_time = new Date(query.begin_time)
-        delete query.begin_time
         query['created_at'] = orm.gte(begin_time)
     }else if (!query.begin_time && query.end_time) {
         end_time = new Date(query.end_time)
-        delete query.end_time
         query['created_at'] = orm.lt(begin_time)
     }
+    delete query.begin_time
+    delete query.end_time
     delete query.page
     delete query.page_size
-
-    query['created_at'] = orm.between(begin_time, end_time)
 
     // console.log(query)
     orm.connect(db_url, (err, db) => {
