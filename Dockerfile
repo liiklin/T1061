@@ -18,8 +18,9 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
 RUN node -v
-RUN systemctl enable ntpd
-RUN systemctl start ntpd
+# RUN service ntp start
+# RUN service ntp status
+RUN timedatectl list-timezones
 RUN timedatectl
 RUN timedatectl set-ntp yes
 # 暴露端口
