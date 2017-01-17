@@ -143,12 +143,13 @@ exports.findByQuery = query => new Promise((resolve, reject) => {
     // console.log(query)
     if (query.begin_time && query.end_time) {
         begin_time = new Date(query.begin_time)
-        end_time = new Date(query.end_time)
+        // end_time = new Date(query.end_time)
+        end_time = new Date(new Date(query.end_time).getTime() - 1)
         query['created_at'] = orm.between(begin_time, end_time)
-    }else if (query.begin_time && !query.end_time) {
+    } else if (query.begin_time && !query.end_time) {
         begin_time = new Date(query.begin_time)
         query['created_at'] = orm.gte(begin_time)
-    }else if (!query.begin_time && query.end_time) {
+    } else if (!query.begin_time && query.end_time) {
         end_time = new Date(query.end_time)
         query['created_at'] = orm.lt(begin_time)
     }
@@ -169,7 +170,7 @@ exports.findByQuery = query => new Promise((resolve, reject) => {
                     db.close()
                     reject(err)
                 } else {
-                    Questions.find(query).limit(20).offset((page - 1) * 20).run((err, results) => {
+                    Questions.find(query).limit(page_size).offset((page - 1) * page_size).run((err, results) => {
                         db.close()
 
                         if (err) {
