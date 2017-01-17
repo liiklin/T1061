@@ -12,7 +12,7 @@
  Target Server Version : 90408
  File Encoding         : utf-8
 
- Date: 01/03/2017 21:36:40 PM
+ Date: 01/17/2017 16:06:04 PM
 */
 
 -- ----------------------------
@@ -44,26 +44,6 @@ CREATE SEQUENCE "public"."similars_id_seq" INCREMENT 1 START 1 MAXVALUE 92233720
 ALTER TABLE "public"."similars_id_seq" OWNER TO "t1061";
 
 -- ----------------------------
---  Table structure for questions
--- ----------------------------
-DROP TABLE IF EXISTS "public"."questions";
-CREATE TABLE "public"."questions" (
-	"id" int4 NOT NULL DEFAULT nextval('questions_id_seq'::regclass),
-	"group_id" int4 NOT NULL,
-	"question" varchar NOT NULL COLLATE "default",
-	"descr" varchar COLLATE "default",
-	"state" varchar NOT NULL COLLATE "default",
-	"reply" varchar COLLATE "default",
-	"user_uuid" varchar COLLATE "default",
-	"created_at" date,
-	"replier_uuid" varchar COLLATE "default",
-	"replied_at" date,
-	"uuid" varchar NOT NULL COLLATE "default"
-)
-WITH (OIDS=FALSE);
-ALTER TABLE "public"."questions" OWNER TO "t1061";
-
--- ----------------------------
 --  Table structure for answers
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."answers";
@@ -79,6 +59,38 @@ WITH (OIDS=FALSE);
 ALTER TABLE "public"."answers" OWNER TO "t1061";
 
 -- ----------------------------
+--  Table structure for groups
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."groups";
+CREATE TABLE "public"."groups" (
+	"id" int4 NOT NULL DEFAULT nextval('groups_id_seq'::regclass),
+	"name" varchar NOT NULL COLLATE "default",
+	"url" varchar NOT NULL COLLATE "default"
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "public"."groups" OWNER TO "t1061";
+
+-- ----------------------------
+--  Table structure for questions
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."questions";
+CREATE TABLE "public"."questions" (
+	"id" int4 NOT NULL DEFAULT nextval('questions_id_seq'::regclass),
+	"group_id" int4 NOT NULL,
+	"question" varchar NOT NULL COLLATE "default",
+	"descr" varchar COLLATE "default",
+	"state" varchar NOT NULL COLLATE "default",
+	"reply" varchar COLLATE "default",
+	"user_uuid" varchar COLLATE "default",
+	"created_at" timestamp(6) NULL,
+	"replier_uuid" varchar COLLATE "default",
+	"replied_at" timestamp(6) NULL,
+	"uuid" varchar NOT NULL COLLATE "default"
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "public"."questions" OWNER TO "t1061";
+
+-- ----------------------------
 --  Table structure for similars
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."similars";
@@ -91,36 +103,14 @@ CREATE TABLE "public"."similars" (
 WITH (OIDS=FALSE);
 ALTER TABLE "public"."similars" OWNER TO "t1061";
 
--- ----------------------------
---  Table structure for groups
--- ----------------------------
-DROP TABLE IF EXISTS "public"."groups";
-CREATE TABLE "public"."groups" (
-	"id" int4 NOT NULL DEFAULT nextval('groups_id_seq'::regclass),
-	"name" varchar NOT NULL COLLATE "default",
-	"url" varchar NOT NULL COLLATE "default"
-)
-WITH (OIDS=FALSE);
-ALTER TABLE "public"."groups" OWNER TO "t1061";
-
 
 -- ----------------------------
 --  Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."answers_id_seq" RESTART 2 OWNED BY "answers"."id";
-ALTER SEQUENCE "public"."groups_id_seq" RESTART 2 OWNED BY "groups"."id";
-ALTER SEQUENCE "public"."questions_id_seq" RESTART 2 OWNED BY "questions"."id";
-ALTER SEQUENCE "public"."similars_id_seq" RESTART 2 OWNED BY "similars"."id";
--- ----------------------------
---  Primary key structure for table questions
--- ----------------------------
-ALTER TABLE "public"."questions" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
-
--- ----------------------------
---  Uniques structure for table questions
--- ----------------------------
-ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_uuid_key" UNIQUE ("uuid") NOT DEFERRABLE INITIALLY IMMEDIATE;
-
+ALTER SEQUENCE "public"."answers_id_seq" RESTART 1 OWNED BY "answers"."id";
+ALTER SEQUENCE "public"."groups_id_seq" RESTART 1 OWNED BY "groups"."id";
+ALTER SEQUENCE "public"."questions_id_seq" RESTART 1 OWNED BY "questions"."id";
+ALTER SEQUENCE "public"."similars_id_seq" RESTART 1 OWNED BY "similars"."id";
 -- ----------------------------
 --  Primary key structure for table answers
 -- ----------------------------
@@ -133,11 +123,6 @@ ALTER TABLE "public"."answers" ADD CONSTRAINT "answers_chlo2u_uuid_key" UNIQUE (
 ALTER TABLE "public"."answers" ADD CONSTRAINT "answers_uuid_key" UNIQUE ("uuid") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
---  Primary key structure for table similars
--- ----------------------------
-ALTER TABLE "public"."similars" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
-
--- ----------------------------
 --  Primary key structure for table groups
 -- ----------------------------
 ALTER TABLE "public"."groups" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
@@ -148,14 +133,29 @@ ALTER TABLE "public"."groups" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IM
 ALTER TABLE "public"."groups" ADD CONSTRAINT "groups_name_key" UNIQUE ("name") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
---  Foreign keys structure for table questions
+--  Primary key structure for table questions
 -- ----------------------------
-ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "public"."groups" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "public"."questions" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+-- ----------------------------
+--  Uniques structure for table questions
+-- ----------------------------
+ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_uuid_key" UNIQUE ("uuid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+-- ----------------------------
+--  Primary key structure for table similars
+-- ----------------------------
+ALTER TABLE "public"."similars" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
 --  Foreign keys structure for table answers
 -- ----------------------------
 ALTER TABLE "public"."answers" ADD CONSTRAINT "answers_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "public"."groups" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+-- ----------------------------
+--  Foreign keys structure for table questions
+-- ----------------------------
+ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "public"."groups" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
 --  Foreign keys structure for table similars
