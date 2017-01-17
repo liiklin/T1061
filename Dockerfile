@@ -17,10 +17,9 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_URL=redis_t1061' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
-# RUN node -v
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-# RUN ntpdate us.pool.ntp.org
-# RUN /usr/sbin/ntpdate us.pool.ntp.org | logger -t NTP
+# RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN date
 RUN date -R
 # 暴露端口
