@@ -22,6 +22,7 @@ RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 # RUN ntpdate us.pool.ntp.org
 # RUN /usr/sbin/ntpdate us.pool.ntp.org | logger -t NTP
 RUN date
+RUN date -R
 # 暴露端口
 EXPOSE 8001
 ENTRYPOINT node ./bin/www.js
