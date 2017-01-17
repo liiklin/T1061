@@ -1,10 +1,9 @@
-# FROM daocloud.io/library/node:latest
 FROM registry.alauda.cn/dubuqingfeng/centos7-nodejs
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
 # 安装依赖
-RUN yum install -y tar
+RUN yum install -y tar ntp
 RUN npm install -g n
 RUN n latest
 RUN npm install
@@ -19,8 +18,10 @@ RUN echo 'PORT=8001' >> .env \
   && echo 'REDIS_PASSWORD=' >> .env
 # 时区
 RUN node -v
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-RUN date
+RUN systemctl enable ntpd
+RUN systemctl start ntpd
+RUN timedatectl
+RUN timedatectl set-ntp yes
 # 暴露端口
 EXPOSE 8001
 ENTRYPOINT node ./bin/www.js
