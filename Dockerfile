@@ -4,10 +4,10 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app
 # 安装依赖
-RUN npm install --registry=https://registry.npm.taobao.org
-RUN npm install -g n --registry=https://registry.npm.taobao.org
 RUN yum install -y tar
 RUN n latest
+RUN npm install --registry=https://registry.npm.taobao.org
+RUN npm install -g n --registry=https://registry.npm.taobao.org
 COPY . /usr/src/app
 # 输入环境配置
 RUN echo 'PORT=8001' >> .env \
