@@ -19,8 +19,8 @@ RUN echo 'PORT=8001' >> .env \
 # 时区
 RUN node -v
 RUN ls /etc/rc.d/init.d/
-RUN /etc/rc.d/init.d/ntp start
-RUN /etc/rc.d/init.d/ntp status
+RUN /etc/rc.d/init.d/ntpd start
+RUN /etc/rc.d/init.d/ntpdd status
 RUN date
 # 暴露端口
 EXPOSE 8001
