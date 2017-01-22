@@ -23,6 +23,7 @@
     "restify-joi-validator": "^1.0.2",
     "restify-namespace": "^0.1.1",
     "tracer": "^0.8.7",
+    "underscore": "^1.8.3",
     "uuid": "^3.0.1"
   },
   "devDependencies": {

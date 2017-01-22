@@ -1,22 +1,38 @@
 const orm = require('orm')
 const uuidV4 = require('uuid/v4')
+const _ = require('underscore')
 const redis = require('./redis')
 const answer = require('./answer')
 const similar = require('./similar')
 const db_url = process.env.DB_URL
 const QuestionsSchema = {
     id: Number,
+    parent_id: Number,
     group_id: Number,
     question: String,
     descr: String,
     state: String,
     reply: String,
     user_uuid: String,
-    created_at: Date,
-    replied_at: Date,
+    created_at: {
+        type: 'date',
+        time: true
+    },
+    replied_at: {
+        type: 'date',
+        time: true
+    },
+    resolved_at: {
+        type: 'date',
+        time: true
+    },
     replier_uuid: String,
     uuid: String
 }
+
+orm.settings.set("connection", {
+    debug: false
+})
 
 exports.findById = id => new Promise((resolve, reject) => {
     orm.connect(db_url, (err, db) => {
@@ -24,7 +40,6 @@ exports.findById = id => new Promise((resolve, reject) => {
             reject(err)
         } else {
             const Questions = db.define('questions', QuestionsSchema)
-
             db.sync(err => {
                 if (err) {
                     db.close()
@@ -37,12 +52,22 @@ exports.findById = id => new Promise((resolve, reject) => {
                     } else {
                         query.uuid = id
                     }
-
-                    Questions.one(query, (err, question) => {
+                    // console.log(`${Number(id)?'id':'uuid'}='${id}'`);
+                    //execQuery
+                    let queryStr = `with RECURSIVE cte as (select a.* from questions a where ${Number(id)?'id':'uuid'}='${id}' union all select k.* from questions k inner join cte c on c.id = k.parent_id)select * from cte;`
+                    db.driver.execQuery(queryStr, (err, questions) => {
+                        // Questions.one(query, (err, question) => {
                         if (err) {
                             db.close()
                             reject(err)
                         } else {
+                            //获取主问题
+                            let question = _.find(questions, (val) => {
+                                    let pk = `${Number(id)?'id':'uuid'}='${id}'`
+                                    return val[pk] = id
+                                }),
+                                childrens = getChildrens(questions, 0)
+                            // console.log(JSON.stringify(childrens))
                             if (question) {
                                 similar.findByQuestionId(question.id)
                                     .then(result => {
@@ -71,6 +96,36 @@ exports.findById = id => new Promise((resolve, reject) => {
                         }
                     })
                 }
+            })
+        }
+    })
+})
+
+let getChildrens = (data, parent_id) => {
+    let result = [],
+        temp
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].parent_id == parent_id) {
+            let obj = data[i]
+            temp = getChildrens(data, data[i].id);
+            if (temp.length > 0) {
+                obj.childrens = temp
+            }
+            result.push(obj)
+        }
+    }
+    return result
+}
+
+exports.findByIdAndNested = id => new Promise((resolve, reject) => {
+    orm.connect(db_url, (err, db) => {
+        if (err) {
+            reject(err)
+        } else {
+            const Questions = db.define('questions', QuestionsSchema)
+
+            db.sync(err => {
+
             })
         }
     })
@@ -143,7 +198,7 @@ exports.findByQuery = query => new Promise((resolve, reject) => {
     // console.log(query)
     if (query.begin_time && query.end_time) {
         begin_time = new Date(query.begin_time)
-        // end_time = new Date(query.end_time)
+            // end_time = new Date(query.end_time)
         end_time = new Date(new Date(query.end_time).getTime() - 1)
         query['created_at'] = orm.between(begin_time, end_time)
     } else if (query.begin_time && !query.end_time) {
@@ -198,6 +253,40 @@ exports.create = object => new Promise((resolve, reject) => {
                 user_uuid: object.user_uuid,
                 uuid: uuidV4(),
                 created_at: new Date(),
+                parent_id: 0,
+                state: 'initial'
+            }
+
+            Questions.create(newRecord, (err, result) => {
+                if (err) {
+                    db.close()
+
+                    reject(err)
+                } else {
+                    redis.emit(`questions create`, result)
+
+                    db.close()
+                    resolve(result)
+                }
+            })
+        }
+    })
+})
+
+exports.createByParentId = object => new Promise((resolve, reject) => {
+    orm.connect(db_url, (err, db) => {
+        if (err) {
+            reject(err)
+        } else {
+            const Questions = db.define('questions', QuestionsSchema)
+            const newRecord = {
+                group_id: 0,
+                descr: object.descr,
+                question: object.question,
+                user_uuid: object.user_uuid,
+                uuid: uuidV4(),
+                created_at: new Date(),
+                parent_id: object.id,
                 state: 'initial'
             }
 
@@ -479,6 +568,75 @@ exports.update = (id, object) => new Promise((resolve, reject) => {
                         }
                     })
                 }
+            })
+        }
+    })
+})
+
+exports.updateByResolve = (id, object) => new Promise((resolve, reject) => {
+    orm.connect(db_url, (err, db) => {
+        if (err) {
+            reject({
+                error: err,
+                code: 500
+            })
+        } else {
+            console.log(object)
+            const Questions = db.define('questions', QuestionsSchema)
+
+            db.sync(err => {
+                const query = {}
+
+                if (Number(id)) {
+                    query.id = id
+                } else {
+                    query.chlo2u_uuid = id
+                }
+
+                Questions.one(query, (err, question) => {
+                    if (err) {
+                        db.close()
+                        reject({
+                            error: err,
+                            code: 500
+                        })
+                    } else {
+                        if (question) {
+                            if (question.user_uuid && question.user_uuid == object.user_uuid) {
+                                question.resolved_at = new Date()
+                                question.state = 'resolved'
+
+                                question.save(err => {
+                                    db.close()
+
+                                    if (err) {
+                                        reject({
+                                            error: err,
+                                            code: 500
+                                        })
+                                    } else {
+                                        redis.emit(`questions update`, question)
+
+                                        resolve(question)
+                                    }
+                                })
+                            } else {
+                                db.close()
+                                reject({
+                                    error: 'user_uuid不一致',
+                                    code: 500
+                                })
+                            }
+                        } else {
+                            db.close()
+
+                            reject({
+                                error: err,
+                                code: 404
+                            })
+                        }
+                    }
+                })
             })
         }
     })

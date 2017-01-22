@@ -63,6 +63,33 @@ module.exports = server => {
                 })
         })
 
+        server.post({
+            path: '/:id/ask',
+            validations: {
+                body: {
+                    descr: joi.string(),
+                    question: joi.string().required(),
+                    user_uuid: joi.string().required()
+                }
+            }
+        }, (req, res, next) => {
+            const body = Object.assign(req.params, req.body)
+
+            question.createByParentId(body)
+                .then(result => {
+                    res.json(result)
+
+                    return next()
+                })
+                .catch(err => {
+                    logger.error('POST /questions/:id/ask', err)
+
+                    res.send(500, {
+                        "message": "create_disallow"
+                    })
+                })
+        })
+
         server.put({
             path: '/:id',
             validations: {
@@ -130,6 +157,43 @@ module.exports = server => {
                         default:
                             res.send(500, {
                                 "message": "delete_disallow"
+                            })
+                    }
+                })
+        })
+
+        // 新增 Put /questions/{id}/resolve
+        server.put({
+            path: '/:id/resolve',
+            validations: {
+                body: {
+                    user_uuid: joi.string()
+                }
+            }
+        }, (req, res, next) => {
+            question.updateByResolve(req.params.id, req.body)
+                .then(result => {
+                    res.json(result)
+
+                    return next()
+                })
+                .catch(err => {
+                    logger.error('PUT /questions/{id}/resolve', err)
+
+                    switch (err.code) {
+                        case 500:
+                            res.send(500, {
+                                "message": err.error
+                            })
+                            break
+                        case 404:
+                            res.send(404, {
+                                "message": "not_found"
+                            })
+                            break
+                        default:
+                            res.send(500, {
+                                "message": err.error
                             })
                     }
                 })

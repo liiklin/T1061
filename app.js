@@ -13,6 +13,6 @@ require('./routers/answer')(server)
 require('./routers/question')(server)
 require('./routers/asyncData')(server)
 
-console.log(new Date())
+// console.log(new Date())
 
 module.exports = server

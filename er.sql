@@ -12,7 +12,7 @@
  Target Server Version : 90408
  File Encoding         : utf-8
 
- Date: 01/17/2017 16:06:04 PM
+ Date: 01/23/2017 01:02:18 AM
 */
 
 -- ----------------------------
@@ -71,6 +71,19 @@ WITH (OIDS=FALSE);
 ALTER TABLE "public"."groups" OWNER TO "t1061";
 
 -- ----------------------------
+--  Table structure for similars
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."similars";
+CREATE TABLE "public"."similars" (
+	"id" int4 NOT NULL DEFAULT nextval('similars_id_seq'::regclass),
+	"question_id" int4 NOT NULL,
+	"answer_id" int4,
+	"created_at" timestamp(6) NULL
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "public"."similars" OWNER TO "t1061";
+
+-- ----------------------------
 --  Table structure for questions
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."questions";
@@ -85,23 +98,12 @@ CREATE TABLE "public"."questions" (
 	"created_at" timestamp(6) NULL,
 	"replier_uuid" varchar COLLATE "default",
 	"replied_at" timestamp(6) NULL,
-	"uuid" varchar NOT NULL COLLATE "default"
+	"uuid" varchar NOT NULL COLLATE "default",
+	"parent_id" int4 DEFAULT 0,
+	"resolved_at" timestamp(6) NULL
 )
 WITH (OIDS=FALSE);
 ALTER TABLE "public"."questions" OWNER TO "t1061";
-
--- ----------------------------
---  Table structure for similars
--- ----------------------------
-DROP TABLE IF EXISTS "public"."similars";
-CREATE TABLE "public"."similars" (
-	"id" int4 NOT NULL DEFAULT nextval('similars_id_seq'::regclass),
-	"question_id" int4 NOT NULL,
-	"answer_id" int4,
-	"created_at" timestamp(6) NULL
-)
-WITH (OIDS=FALSE);
-ALTER TABLE "public"."similars" OWNER TO "t1061";
 
 
 -- ----------------------------
@@ -133,6 +135,11 @@ ALTER TABLE "public"."groups" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IM
 ALTER TABLE "public"."groups" ADD CONSTRAINT "groups_name_key" UNIQUE ("name") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
+--  Primary key structure for table similars
+-- ----------------------------
+ALTER TABLE "public"."similars" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+-- ----------------------------
 --  Primary key structure for table questions
 -- ----------------------------
 ALTER TABLE "public"."questions" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
@@ -143,19 +150,9 @@ ALTER TABLE "public"."questions" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY
 ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_uuid_key" UNIQUE ("uuid") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
---  Primary key structure for table similars
--- ----------------------------
-ALTER TABLE "public"."similars" ADD PRIMARY KEY ("id") NOT DEFERRABLE INITIALLY IMMEDIATE;
-
--- ----------------------------
 --  Foreign keys structure for table answers
 -- ----------------------------
 ALTER TABLE "public"."answers" ADD CONSTRAINT "answers_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "public"."groups" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE;
-
--- ----------------------------
---  Foreign keys structure for table questions
--- ----------------------------
-ALTER TABLE "public"."questions" ADD CONSTRAINT "questions_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "public"."groups" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 -- ----------------------------
 --  Foreign keys structure for table similars

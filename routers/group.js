@@ -219,7 +219,7 @@ module.exports = server => {
                   end_time: joi.string(),
                   page: joi.number().integer().min(1).required(),
                   page_size: joi.number().integer().min(5).required(),
-                  state: joi.any().valid(['initial', 'linked', 'aborted', 'replied']),
+                  state: joi.any().valid(['initial', 'linked', 'aborted', 'replied','resolved']),
                   group_id: joi.string(),
                   user_uuid: joi.string()
                 }
