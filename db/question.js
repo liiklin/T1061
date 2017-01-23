@@ -581,7 +581,6 @@ exports.updateByResolve = (id, object) => new Promise((resolve, reject) => {
                 code: 500
             })
         } else {
-            console.log(object)
             const Questions = db.define('questions', QuestionsSchema)
 
             db.sync(err => {

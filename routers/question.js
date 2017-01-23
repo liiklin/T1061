@@ -173,7 +173,11 @@ module.exports = server => {
         }, (req, res, next) => {
             question.updateByResolve(req.params.id, req.body)
                 .then(result => {
-                    res.json(result)
+                    // res.json(result)
+                    res.json({
+                        "status": "success",
+                        "msg": "成功"
+                    })
 
                     return next()
                 })
@@ -183,16 +187,19 @@ module.exports = server => {
                     switch (err.code) {
                         case 500:
                             res.send(500, {
+                                "status":"failed",
                                 "message": err.error
                             })
                             break
                         case 404:
                             res.send(404, {
+                                "status":"failed",
                                 "message": "not_found"
                             })
                             break
                         default:
                             res.send(500, {
+                                "status":"failed",
                                 "message": err.error
                             })
                     }
